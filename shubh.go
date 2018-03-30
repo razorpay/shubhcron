@@ -34,6 +34,7 @@ const (
  * considered Shubh or not, we are avoiding
  */
 func IsChowgadhiyaConsideredShubh(c Chowgadhiya) bool {
+  debug("Picked Chowgadhiya", c)
   if c == Amrit || c == Shubh || c == Labh {
     return true
   }
@@ -76,6 +77,9 @@ func getChowgadhiyaListFromWeekday(day time.Weekday, phase Phase) []Chowgadhiya 
 func getChowgadhiya(t time.Time) Chowgadhiya {
   sunrise, sunset, nextSunrise := GetVedicDay(t)
 
+  debug("next sunrise", nextSunrise)
+  debug("current time", t)
+
   if t.Before(sunrise) || t.After(nextSunrise) {
     panic("current time does not fall between Sunrise and Sunset")
   }
@@ -93,21 +97,25 @@ func getChowgadhiya(t time.Time) Chowgadhiya {
     // Nighttime
     phase = Night
     baseTime = sunset
-    offsetInSeconds = (nextSunrise.Sub(t) / 8).Seconds()
+    offsetInSeconds = (nextSunrise.Sub(sunset) / 8).Seconds()
+    debug("time difference: ", nextSunrise.Sub(t).Hours())
   }
 
   timePassedInCurrentPhase := t.Sub(baseTime).Seconds()
+  debug("Time passed", timePassedInCurrentPhase)
+  debug("offsetInSeconds", offsetInSeconds)
   numberOfChowgadhiyaPassed := timePassedInCurrentPhase / offsetInSeconds
+  debug("numberOfChowgadhiyaPassed: ", numberOfChowgadhiyaPassed)
   chowgadhiyaIndex := int(math.Floor(numberOfChowgadhiyaPassed))
+  debug("chowgadhiyaIndex: ", chowgadhiyaIndex)
   list := getChowgadhiyaListFromWeekday(sunrise.Weekday(), phase)
+  debug("phase: ", phase)
+  debug("list: ")
+  debug(list)
   return list[chowgadhiyaIndex]
 }
 
 func GetSunriseSunset(t time.Time) (time.Time, time.Time) {
-  Error := log.New(os.Stderr,
-    "ERROR: ",
-    log.Ldate|log.Ltime|log.Lshortfile)
-
   t = time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.UTC)
 
   p := sunrisesunset.Parameters{
@@ -125,12 +133,7 @@ func GetSunriseSunset(t time.Time) (time.Time, time.Time) {
   if err == nil {
     return sunrise, sunset
   }
-
-  _, debug := os.LookupEnv("DEBUG")
-  if debug {
-    Error.Panicln("Sunrise/Sunset calculations failed")
-  }
-  panic("")
+  panic("sunrise/sunset calculations failed")
 }
 
 /**
@@ -141,7 +144,7 @@ func isShubh(now time.Time) bool {
   return IsChowgadhiyaConsideredShubh(chowgadhiya)
 }
 
-func GetVedicDay(now time.Time) (time.Time, time.Time, time.Time) {
+func debug(strings ...interface{}) {
   Debug := log.New(os.Stdout,
     "DEBUG: ",
     log.Ldate|log.Ltime|log.Lshortfile)
@@ -151,6 +154,11 @@ func GetVedicDay(now time.Time) (time.Time, time.Time, time.Time) {
   if debug != true {
     Debug.SetOutput(ioutil.Discard)
   }
+
+  Debug.Println(strings...)
+}
+
+func GetVedicDay(now time.Time) (time.Time, time.Time, time.Time) {
 
   var sunrise, sunset, nextSunrise time.Time
 
@@ -169,13 +177,13 @@ func GetVedicDay(now time.Time) (time.Time, time.Time, time.Time) {
   // Sun has not risen yet
   // So check the sunrise for yesterday
   if now.Before(sunrise) {
-    Debug.Println("sun is not yet up, go back to bed")
+    debug("sun is not yet up, go back to bed")
     nextSunrise, sunset = GetSunriseSunset(yesterday)
 
     sunset = time.Date(yesterday.Year(), yesterday.Month(), yesterday.Day(), sunset.Hour(), sunset.Minute(), sunset.Second(), sunset.Nanosecond(), loc)
     nextSunrise = time.Date(yesterday.Year(), yesterday.Month(), yesterday.Day(), nextSunrise.Hour(), nextSunrise.Minute(), nextSunrise.Second(), nextSunrise.Nanosecond(), loc)
   } else {
-    Debug.Println("sun is up, rise and shine")
+    debug("sun is up, rise and shine")
     // Calculate the sunrise time for tomorrow
     nextSunrise, _ = GetSunriseSunset(tomorrow)
     nextSunrise = time.Date(tomorrow.Year(), tomorrow.Month(), tomorrow.Day(), nextSunrise.Hour(), nextSunrise.Minute(), nextSunrise.Second(), nextSunrise.Nanosecond(), loc)
@@ -183,9 +191,9 @@ func GetVedicDay(now time.Time) (time.Time, time.Time, time.Time) {
 
   // Now we have a definite sunrise time for the "vedic day"
 
-  Debug.Println("Sunrise     :", sunrise)
-  Debug.Println("Sunset      :", sunset)
-  Debug.Println("Next Sunrise:", nextSunrise)
+  debug("Sunrise     :", sunrise)
+  debug("Sunset      :", sunset)
+  debug("Next Sunrise:", nextSunrise)
 
   return sunrise, sunset, nextSunrise
 }
@@ -200,23 +208,46 @@ func printHelp() {
   fmt.Println("  set DEBUG environment variable for debugging")
 }
 
-func main() {
-  if len(os.Args) < 2 {
-    printHelp()
-    os.Exit(0)
-  }
-
+/**
+ * Runs the command if the time is Shubh
+ * and exits if it was ran
+ */
+func RunCommand() {
   command := os.Args[1]
   argsWithoutProg := os.Args[2:]
+
   now := time.Now()
 
   if isShubh(now) {
     cmd := exec.Command(command, argsWithoutProg...)
     cmd.Stdout = os.Stdout
     cmd.Stderr = os.Stderr
-    cmd.Run()
-  } else {
-    os.Exit(1)
+    err := cmd.Run()
+    if err == nil {
+      os.Exit(0)
+    } else {
+      fmt.Println("error in executing command. Command: ")
+      fmt.Println(os.Args[1:])
+      os.Exit(255)
+    }
+  }
+}
+
+func main() {
+  if len(os.Args) < 2 {
+    printHelp()
+    os.Exit(0)
   }
 
+  _, wait := os.LookupEnv("SHUBH_WAIT")
+
+  // Since our shubh times are ~90 minutes long
+  // we are okay checking every minute
+  RunCommand()
+  if wait {
+    debug("Running in wait mode")
+    for range time.Tick(10 * time.Second) {
+      RunCommand()
+    }
+  }
 }
