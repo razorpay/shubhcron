@@ -19,8 +19,24 @@ shubh php artisan email:send
 shubh sendtoaddress <bitcoinaddress> <amount>
 # Run the JVM garbage collector
 shubh /usr/bin/bin/jcmd GC.run
+# Sign documents only when the time is right
+shubh gpg --sign
 ```
 
-# Installation
+# Cron Usage
 
-TODO
+If you have the `shubh` binary available, you can prepend all your important jobs with `shubh` in your crontab to run them only if the time is right.
+
+```
+# Try this job every 15 minutes on the 31st of March after 6pm
+0/15 18-23 31 MAR * /usr/bin/shubh rake finance:closing
+```
+
+If you have installed the `shubhcron` package, you can omit the `/usr/bin/shubh`:
+
+```
+# Attempts to send a mail every 5 minutes, only runs if the time is shubh
+*/5 * * * * sendmail --subject "shubh labh"
+```
+
+You can also pass an extra environment variable `SHUBH_WAIT=1` to sleep til the time is shubh instead of exiting.
