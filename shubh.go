@@ -5,6 +5,7 @@ import (
   "log"
   "math"
   "os"
+  "os/exec"
   "time"
 )
 
@@ -178,6 +179,17 @@ func GetVedicDay(now time.Time) (time.Time, time.Time, time.Time) {
 }
 
 func main() {
+  command := os.Args[1]
+  argsWithoutProg := os.Args[2:]
   now := time.Now()
-  isShubh(now)
+
+  if isShubh(now) {
+    cmd := exec.Command(command, argsWithoutProg...)
+    cmd.Stdout = os.Stdout
+    cmd.Stderr = os.Stderr
+    cmd.Run()
+  } else {
+    os.Exit(1)
+  }
+
 }
