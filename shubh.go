@@ -32,7 +32,7 @@ const (
 
 // https://hinduism.stackexchange.com/questions/26242/how-is-the-first-choghadiya-decided
 // Golang does not allow constant maps, but a literal map is close enough
-var chowgadhiyaList = map[Phase]map[time.Weekday][]Chowgadhiya{
+var CHOWGADHIYA_LIST = map[Phase]map[time.Weekday][]Chowgadhiya{
   Day: map[time.Weekday][]Chowgadhiya{
     time.Sunday    : []Chowgadhiya{Udveg , Chal  , Labh  , Amrit , Kaal  , Shubh , Rog   , Udveg} ,
     time.Monday    : []Chowgadhiya{Amrit , Kaal  , Shubh , Rog   , Udveg , Chal  , Labh  , Amrit} ,
@@ -57,7 +57,7 @@ var chowgadhiyaList = map[Phase]map[time.Weekday][]Chowgadhiya{
  * There is some confusion as to whether Chal is
  * considered Shubh or not, we are avoiding
  */
-func IsChowgadhiyaConsideredShubh(c Chowgadhiya) bool {
+func isChowgadhiyaConsideredShubh(c Chowgadhiya) bool {
   debug("Picked Chowgadhiya", c)
   return (c == Amrit || c == Shubh || c == Labh)
 }
@@ -66,14 +66,14 @@ func IsChowgadhiyaConsideredShubh(c Chowgadhiya) bool {
  * Returns the list of Chowgadhiyas in Order for Daytime
  */
 func getChowgadhiyaListFromWeekday(day time.Weekday, phase Phase) []Chowgadhiya {
-  return chowgadhiyaList[phase][day]
+  return CHOWGADHIYA_LIST[phase][day]
 }
 
 /**
  * Takes time and returns the correct Chowgadhiya
  */
 func getChowgadhiya(t time.Time) Chowgadhiya {
-  sunrise, sunset, nextSunrise := GetVedicDay(t)
+  sunrise, sunset, nextSunrise := getVedicDay(t)
 
   debug("Next sunrise:", nextSunrise)
   debug("Current time:", t)
@@ -112,7 +112,7 @@ func getChowgadhiya(t time.Time) Chowgadhiya {
   return list[chowgadhiyaIndex]
 }
 
-func GetSunriseSunset(t time.Time) (time.Time, time.Time) {
+func getSunriseSunset(t time.Time) (time.Time, time.Time) {
   reference_time := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.UTC)
 
   _, offset := t.Zone()
@@ -146,7 +146,7 @@ func GetSunriseSunset(t time.Time) (time.Time, time.Time) {
  */
 func isShubh(now time.Time) bool {
   chowgadhiya := getChowgadhiya(now)
-  return IsChowgadhiyaConsideredShubh(chowgadhiya)
+  return isChowgadhiyaConsideredShubh(chowgadhiya)
 }
 
 func debug(strings ...interface{}) {
@@ -163,11 +163,11 @@ func debug(strings ...interface{}) {
   Debug.Println(strings...)
 }
 
-func GetVedicDay(now time.Time) (time.Time, time.Time, time.Time) {
+func getVedicDay(now time.Time) (time.Time, time.Time, time.Time) {
 
   var sunrise, sunset, nextSunrise time.Time
 
-  sunrise, sunset = GetSunriseSunset(now)
+  sunrise, sunset = getSunriseSunset(now)
 
   yesterday := now.AddDate(0, 0, -1)
   tomorrow := now.AddDate(0, 0, 1)
@@ -183,14 +183,14 @@ func GetVedicDay(now time.Time) (time.Time, time.Time, time.Time) {
   // So check the sunrise for yesterday
   if now.Before(sunrise) {
     debug("Sun is not yet up, go back to bed")
-    nextSunrise, sunset = GetSunriseSunset(yesterday)
+    nextSunrise, sunset = getSunriseSunset(yesterday)
 
     sunset = time.Date(yesterday.Year(), yesterday.Month(), yesterday.Day(), sunset.Hour(), sunset.Minute(), sunset.Second(), sunset.Nanosecond(), loc)
     nextSunrise = time.Date(yesterday.Year(), yesterday.Month(), yesterday.Day(), nextSunrise.Hour(), nextSunrise.Minute(), nextSunrise.Second(), nextSunrise.Nanosecond(), loc)
   } else {
     debug("Sun is up, rise and shine")
     // Calculate the sunrise time for tomorrow
-    nextSunrise, _ = GetSunriseSunset(tomorrow)
+    nextSunrise, _ = getSunriseSunset(tomorrow)
     nextSunrise = time.Date(tomorrow.Year(), tomorrow.Month(), tomorrow.Day(), nextSunrise.Hour(), nextSunrise.Minute(), nextSunrise.Second(), nextSunrise.Nanosecond(), loc)
   }
 
@@ -217,7 +217,7 @@ func printHelp() {
  * Runs the command if the time is Shubh
  * and exits if it was ran
  */
-func RunCommand() {
+func runCommand() {
   command := os.Args[1]
   argsWithoutProg := os.Args[2:]
 
@@ -231,8 +231,7 @@ func RunCommand() {
     if err == nil {
       os.Exit(0)
     } else {
-      fmt.Println("error in executing command. Command:")
-      fmt.Println(os.Args[1:])
+      fmt.Println("error in executing command. Command:", os.Args[1:])
       os.Exit(255)
     }
   }
@@ -248,11 +247,11 @@ func main() {
 
   // Since our shubh times are ~90 minutes long
   // we are okay checking every minute
-  RunCommand()
+  runCommand()
   if wait {
     debug("Running in wait mode")
     for range time.Tick(10 * time.Second) {
-      RunCommand()
+      runCommand()
     }
   }
 }
