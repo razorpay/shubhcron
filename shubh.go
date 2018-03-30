@@ -112,6 +112,7 @@ func GetSunriseSunset(t time.Time) (time.Time, time.Time) {
 
   p := sunrisesunset.Parameters{
     // Hardcoded to Bangalore right now
+    // Should be changed to Ayodhya
     Latitude:  12.9716,
     Longitude: 77.5946,
     // TODO: Use t.Zone() instead
@@ -168,13 +169,13 @@ func GetVedicDay(now time.Time) (time.Time, time.Time, time.Time) {
   // Sun has not risen yet
   // So check the sunrise for yesterday
   if now.Before(sunrise) {
-    Debug.Println("sun is not yet up")
+    Debug.Println("sun is not yet up, go back to bed")
     nextSunrise, sunset = GetSunriseSunset(yesterday)
 
     sunset = time.Date(yesterday.Year(), yesterday.Month(), yesterday.Day(), sunset.Hour(), sunset.Minute(), sunset.Second(), sunset.Nanosecond(), loc)
     nextSunrise = time.Date(yesterday.Year(), yesterday.Month(), yesterday.Day(), nextSunrise.Hour(), nextSunrise.Minute(), nextSunrise.Second(), nextSunrise.Nanosecond(), loc)
   } else {
-    Debug.Println("sun rose already")
+    Debug.Println("sun is up, rise and shine")
     // Calculate the sunrise time for tomorrow
     nextSunrise, _ = GetSunriseSunset(tomorrow)
     nextSunrise = time.Date(tomorrow.Year(), tomorrow.Month(), tomorrow.Day(), nextSunrise.Hour(), nextSunrise.Minute(), nextSunrise.Second(), nextSunrise.Nanosecond(), loc)
@@ -190,6 +191,8 @@ func GetVedicDay(now time.Time) (time.Time, time.Time, time.Time) {
 }
 
 func printHelp() {
+  // Replacing this with a proper parser is left
+  // as an exercise for the reader
   fmt.Println("Usage: shubh command [args...]")
   fmt.Println("  runs the command only if the time is auspicious")
   fmt.Println("  exits with status 1 otherwise")
