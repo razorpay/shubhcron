@@ -1,7 +1,9 @@
 package main
 
 import (
+  "fmt"
   "github.com/kelvins/sunrisesunset"
+  "io/ioutil"
   "log"
   "math"
   "os"
@@ -123,7 +125,10 @@ func GetSunriseSunset(t time.Time) (time.Time, time.Time) {
     return sunrise, sunset
   }
 
-  Error.Panicln("Sunrise/Sunset calculations failed")
+  _, debug := os.LookupEnv("DEBUG")
+  if debug {
+    Error.Panicln("Sunrise/Sunset calculations failed")
+  }
   panic("")
 }
 
@@ -139,6 +144,12 @@ func GetVedicDay(now time.Time) (time.Time, time.Time, time.Time) {
   Debug := log.New(os.Stdout,
     "DEBUG: ",
     log.Ldate|log.Ltime|log.Lshortfile)
+
+  _, debug := os.LookupEnv("DEBUG")
+
+  if debug != true {
+    Debug.SetOutput(ioutil.Discard)
+  }
 
   var sunrise, sunset, nextSunrise time.Time
 
@@ -178,7 +189,20 @@ func GetVedicDay(now time.Time) (time.Time, time.Time, time.Time) {
   return sunrise, sunset, nextSunrise
 }
 
+func printHelp() {
+  fmt.Println("Usage: shubh command [args...]")
+  fmt.Println("  runs the command only if the time is auspicious")
+  fmt.Println("  exits with status 1 otherwise")
+  fmt.Println("  set SHUBH_WAIT environment variable to wait and run the command instead")
+  fmt.Println("  set DEBUG environment variable for debugging")
+}
+
 func main() {
+  if len(os.Args) < 2 {
+    printHelp()
+    os.Exit(0)
+  }
+
   command := os.Args[1]
   argsWithoutProg := os.Args[2:]
   now := time.Now()
