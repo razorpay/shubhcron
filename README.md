@@ -2,21 +2,25 @@
 
 shubhcron is a auspicious cron runner. It is a drop-in replacement for your existing cron runners (cronie/anacron etc) and allows you to make sure that your jobs only run on auspicious timings.
 
-The syntax is fairly simple:
+The package comes with a `shubh` binary that you can use to wrap other programs and run them only if the current time is shubh.
 
-`* * * * * AUSPICIOUS_FLAG`
+For eg:
 
-The first 5 values are respected as per the standard crontab format. The AUSPICIOUS_FLAG accepts the following values:
+```bash
+# Restart server only on auspicious timings
+shubh shutdown --reboot
+# Run package uprades only when the stars align
+shubh apt-get upgrade --assume-yes
+# Run deployments
+shubh kubectl set deployments image app application=$VERSION
+# Schedule emails to your customers to increase conversions
+shubh php artisan email:send
+# Schedule money transfers to your preferred charity
+shubh sendtoaddress <bitcoinaddress> <amount>
+# Run the JVM garbage collector
+shubh /usr/bin/bin/jcmd GC.run
+```
 
-## Choghadiya
+# Installation
 
-There are four good Choghadiya, Amrit, Shubh, Labh, and Char to start auspicious work. The cronjob will only run if one of these 4 matches.
-
-## Lagna
-
-You can pick which Lagna you want by using Lagna_Zodiac as the flag.
-
-The auspicious flag must always be in capitals.
-
-- You can use multiple flags as a comma-separated string.
-- You can negate a specific flag by using a - before it
+TODO
