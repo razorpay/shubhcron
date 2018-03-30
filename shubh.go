@@ -8,6 +8,7 @@ import (
   "math"
   "os"
   "os/exec"
+  "strconv"
   "time"
 )
 
@@ -58,10 +59,7 @@ var chowgadhiyaList = map[Phase]map[time.Weekday][]Chowgadhiya{
  */
 func IsChowgadhiyaConsideredShubh(c Chowgadhiya) bool {
   debug("Picked Chowgadhiya", c)
-  if c == Amrit || c == Shubh || c == Labh {
-    return true
-  }
-  return false
+  return (c == Amrit || c == Shubh || c == Labh)
 }
 
 /**
@@ -115,7 +113,7 @@ func getChowgadhiya(t time.Time) Chowgadhiya {
 }
 
 func GetSunriseSunset(t time.Time) (time.Time, time.Time) {
-  t = time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
+  reference_time := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.UTC)
 
   _, offset := t.Zone()
 
@@ -125,11 +123,14 @@ func GetSunriseSunset(t time.Time) (time.Time, time.Time) {
     fractional_offset = 12 - fractional_offset
   }
 
+  latitude, _ := strconv.ParseFloat(os.Getenv("LATITUDE"), 64)
+  longitude, _ := strconv.ParseFloat(os.Getenv("LONGITUDE"), 64)
+
   p := sunrisesunset.Parameters{
-    Latitude:  os.LookupEnv("LATITUDE"),
-    Longitude: os.LookupEnv("LONGITUDE"),
+    Latitude:  latitude,
+    Longitude: longitude,
     UtcOffset: fractional_offset,
-    Date:      t,
+    Date:      reference_time,
   }
 
   sunrise, sunset, err := p.GetSunriseSunset()
