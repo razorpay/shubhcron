@@ -115,16 +115,23 @@ func getChowgadhiya(t time.Time) Chowgadhiya {
 }
 
 func GetSunriseSunset(t time.Time) (time.Time, time.Time) {
-  t = time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.UTC)
+  t = time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
+
+  _, offset := t.Zone()
+
+  fractional_offset := (float64(offset)/60/60);
+
+  if fractional_offset > 12 {
+    fractional_offset = 12 - fractional_offset
+  }
 
   p := sunrisesunset.Parameters{
-    Latitude:  26.7880,
-    Longitude: 82.1986,
-    // TODO: Use t.Zone() instead
-    // And make sure that the sign is correct
-    UtcOffset: 5.5,
+    Latitude:  os.LookupEnv("LATITUDE"),
+    Longitude: os.LookupEnv("LONGITUDE"),
+    UtcOffset: fractional_offset,
     Date:      t,
   }
+
   sunrise, sunset, err := p.GetSunriseSunset()
 
   if err == nil {
