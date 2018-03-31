@@ -48,9 +48,9 @@ You can also pass an extra environment variable `SHUBH_WAIT=1` to sleep till the
 
 ## Stand-Alone
 
-If you'd like to not replace your system's `cron` package, you can download the `shubh` binary for your prefered OS and use it directly as a prefix in your cronjobs.
+If you'd like to not replace your system's `cron` package, you can download the `shubh` binary from the [releases page][releases] for your prefered OS and use it directly as a prefix in your cronjobs.
 
-## Debian/Ubuntu
+## Ubuntu
 
 We have a ready Debian and Ubuntu package available that replaces the system `cron` package.
 
@@ -60,7 +60,7 @@ An Alpine Linux package is also available
 
 ## Arch Linux
 
-An AUR package is available.
+An AUR package is available at [AUR][aur] based on `cronie`.
 
 ## Kubernetes
 
@@ -69,3 +69,6 @@ We plan to release the kubernetes controller that lets you create shubhcron reso
 # License
 
 `shubh` and `shubhcron` are licensed under the MIT License. See `LICENSE` for more details.
+
+[releases]: https://github.com/razorpay/shubhcron/releases/latest
+[aur]: https://aur.archlinux.org/packages/shubhcron
