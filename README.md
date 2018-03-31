@@ -1,6 +1,6 @@
 # shubhcron
 
-Shubhcron is a auspicious cron runner. It is a drop-in replacement for your existing cron runners (cronie/anacron etc) and allows you to make sure that your jobs only run on auspicious timings.
+Shubhcron is an auspicious cron runner. It is a drop-in replacement for your existing cron runners (cronie/anacron etc) and allows you to make sure that your jobs only run on auspicious timings.
 
 The package comes with a `shubh` binary that you can use to wrap other programs and run them only if the current time is shubh.
 
