@@ -52,11 +52,11 @@ If you'd like to not replace your system's `cron` package, you can download the 
 
 ## Ubuntu
 
-We have a ready Debian and Ubuntu package available that replaces the system `cron` package.
+We have a ready [Debian and Ubuntu package][releases] available that replaces the system `cron` package.
 
 ## Alpine Linux
 
-An Alpine Linux package is also available
+An Alpine Linux package is in the Docker pipeline.
 
 ## Arch Linux
 
@@ -66,9 +66,21 @@ Package for Arch Linux (based on `cronie`) is available at [AUR][aur].
 
 We plan to release the kubernetes controller that lets you create ShubhCronJob resources soon.
 
+# Reading the Stars
+
+In order to figure out the best shubh muhurat, `shubh` calculates the vedic day (which starts from sunrise and lasts till the next sunrise) and calculates the correct चौगाड़िया and then uses a vedic lookup table (memoized) to determine if the time is auspiciousness or not.
+
+The current system time is used for all calculations. The latitude and longitude is picked up from the environment and used to calculate the sunrise/sunset times. The library used for [calculating sunrise/sunset times](https://github.com/kelvins/sunrisesunset) implements the same algorithm published by the [National Oceanic & Atmospheric Administration (NOAA)][noaa] and includes corrections for Atmospheric refraction.
+
+# Web
+
+We offer a web-service as well to calculate the auspiciousness of a moment. Just make a request to <#> to get the current chowgadhiya (along with the next few).
+
 # License
 
-`shubh` and `shubhcron` are licensed under the MIT License. See `LICENSE` for more details.
+`shubh` and `shubhcron` are licensed under the MIT License. See `LICENSE` for more details. All code in this repo
+is released to the spiritual domain.
 
 [releases]: https://github.com/razorpay/shubhcron/releases/latest
 [aur]: https://aur.archlinux.org/packages/shubhcron
+[noaa]: http://www.noaa.gov/
