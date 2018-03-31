@@ -23,7 +23,7 @@ shubh /usr/bin/bin/jcmd GC.run
 SHUBH_WAIT=1 shubh gpg --sign
 ```
 
-# Cron Usage
+## Cron Usage
 
 If you have the `shubh` binary available, you can prepend all your important jobs with `shubh` in your crontab to run them only if the time is right.
 
@@ -44,42 +44,43 @@ LONGITUDE=82.1986
 
 You can also pass an extra environment variable `SHUBH_WAIT=1` to sleep till the time is shubh instead of exiting.
 
-# Installation
+## Installation
 
-## Stand-Alone
+### Stand-Alone
 
-If you'd like to not replace your system's `cron` package, you can download the `shubh` binary from the [releases page][releases] for your prefered OS and use it directly as a prefix in your cronjobs.
+If you'd prefer to not replace your system's `cron` package, you can download the `shubh` binary from the [releases page][releases] for your prefered OS and use it directly as a prefix in your cronjobs.
 
-## Ubuntu
+### Ubuntu
 
 We have a ready [Debian and Ubuntu package][releases] available that replaces the system `cron` package.
 
-## Alpine Linux
+### Alpine Linux
 
 An Alpine Linux package is in the Docker pipeline.
 
-## Arch Linux
+### Arch Linux
 
 Package for Arch Linux (based on `cronie`) is available at [AUR][aur].
 
-## Kubernetes
+### Kubernetes
 
 We plan to release the kubernetes controller that lets you create ShubhCronJob resources soon.
 
-# Reading the Stars
+## Reading the Stars
 
-In order to figure out the best shubh muhurat, `shubh` calculates the vedic day (which starts from sunrise and lasts till the next sunrise) and calculates the correct चौगाड़िया and then uses a vedic lookup table (memoized) to determine if the time is auspiciousness or not.
+In order to figure out the best shubh muhurat, `shubh` calculates the vedic day (which starts from sunrise and lasts till the next sunrise), calculates the correct चौगाड़िया and then uses a vedic lookup table (memoized) to determine if the time is auspiciousness or not.
 
-The current system time is used for all calculations. The latitude and longitude is picked up from the environment and used to calculate the sunrise/sunset times. The library used for [calculating sunrise/sunset times](https://github.com/kelvins/sunrisesunset) implements the same algorithm published by the [National Oceanic & Atmospheric Administration (NOAA)][noaa] and includes corrections for Atmospheric refraction.
+The current system time is used for all calculations. The latitude and longitude, required for calculation of sunrise and sunset times, are picked up from the environment. If not available, the coordinates of Ayodhya are used by default.
+The [library]((https://github.com/kelvins/sunrisesunset)) used for calculating sunrise/sunset times implements the same algorithm published by the [National Oceanic & Atmospheric Administration (NOAA)][noaa] and includes corrections for Atmospheric refraction.
 
-# Web
+## Web
 
-We offer a web-service as well to calculate the auspiciousness of a moment. Just make a request to <#> to get the current chowgadhiya (along with the next few).
+We offer a web-service as well to calculate the auspiciousness of a moment. Just make a request to the [ShubhCron Pandit API endpoint](https://shubhcron-pandit.herokuapp.com/chowgadhiya) to get the current chowgadhiya (along with the next few).
+Note that the webservice assumes Ayodhya to be the location.
 
 # License
 
-`shubh` and `shubhcron` are licensed under the MIT License. See `LICENSE` for more details. All code in this repo
-is released to the spiritual domain.
+`shubh` and `shubhcron` are licensed under the MIT License. See `LICENSE` for more details. All code in this repo is released to the spiritual domain.
 
 [releases]: https://github.com/razorpay/shubhcron/releases/latest
 [aur]: https://aur.archlinux.org/packages/shubhcron
