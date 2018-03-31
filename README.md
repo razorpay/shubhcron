@@ -19,8 +19,8 @@ shubh php artisan email:send
 shubh sendtoaddress <bitcoinaddress> <amount>
 # Run the JVM garbage collector, but only if all is well
 shubh /usr/bin/bin/jcmd GC.run
-# Sign documents, but only if the time is right
-shubh gpg --sign
+# Sign documents, but wait till the time is right
+SHUBH_WAIT=1 shubh gpg --sign
 ```
 
 # Cron Usage
@@ -60,11 +60,11 @@ An Alpine Linux package is also available
 
 ## Arch Linux
 
-An AUR package is available at [AUR][aur] based on `cronie`.
+Package for Arch Linux (based on `cronie`) is available at [AUR][aur].
 
 ## Kubernetes
 
-We plan to release the kubernetes controller that lets you create shubhcron resources soon.
+We plan to release the kubernetes controller that lets you create ShubhCronJob resources soon.
 
 # License
 

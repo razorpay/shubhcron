@@ -1,0 +1,28 @@
+diff --git a/cron b/cron
+index 3ae66cf..50a7c89 100755
+Binary files a/cron and b/cron differ
+diff --git a/do_command.c b/do_command.c
+index d52ec33..ee894d8 100644
+--- a/do_command.c
++++ b/do_command.c
+@@ -87,6 +87,20 @@ do_command(e, u)
+ 	Debug(DPROC, ("[%d] do_command(%s, (%s,%d,%d))\n",
+ 		getpid(), e->cmd, u->name, e->uid, e->gid))
+ 
++	char *shubhprefix = "/usr/bin/shubh ";
++	size_t lenpre = strlen(shubhprefix),lenstr = strlen(e->cmd);
++
++	// If command is not already prefixed
++	if (!(lenstr < lenpre ? FALSE : (strncmp(shubhprefix, e->cmd, lenpre)== 0)))
++	{
++		char *c = malloc(strlen(shubhprefix)+strlen(e->cmd)+1);
++		strcpy(c, shubhprefix);
++		strcat(c, e->cmd);
++		e->cmd = c;
++		log_it("CRON", getpid(), "INFO", "shubhness added");
++		log_it("CRON", getpid(), "INFO", e->cmd);
++	}
++
+ 	/* fork to become asynchronous -- parent process is done immediately,
+ 	 * and continues to run the normal cron code, which means return to
+ 	 * tick().  the child and grandchild don't leave this function, alive.
