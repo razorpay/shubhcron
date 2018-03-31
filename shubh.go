@@ -30,6 +30,10 @@ const (
   Udveg
 )
 
+// Ultimate default coordinates
+const DEFAULT_LATITUDE  string = "26.7880"
+const DEFAULT_LONGITUDE string = "82.1986"
+
 // https://hinduism.stackexchange.com/questions/26242/how-is-the-first-choghadiya-decided
 // Golang does not allow constant maps, but a literal map is close enough
 var CHOWGADHIYA_LIST = map[Phase]map[time.Weekday][]Chowgadhiya{
@@ -112,6 +116,13 @@ func getChowgadhiya(t time.Time) Chowgadhiya {
   return list[chowgadhiyaIndex]
 }
 
+func getEnv(key, fallback string) string {
+  if value, ok := os.LookupEnv(key); ok {
+    return value
+  }
+  return fallback
+}
+
 func getSunriseSunset(t time.Time) (time.Time, time.Time) {
   reference_time := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.UTC)
 
@@ -123,8 +134,8 @@ func getSunriseSunset(t time.Time) (time.Time, time.Time) {
     fractional_offset = 12 - fractional_offset
   }
 
-  latitude, _ := strconv.ParseFloat(os.Getenv("LATITUDE"), 64)
-  longitude, _ := strconv.ParseFloat(os.Getenv("LONGITUDE"), 64)
+  latitude, _  := strconv.ParseFloat(getEnv("LATITUDE", DEFAULT_LATITUDE), 64)
+  longitude, _ := strconv.ParseFloat(getEnv("LONGITUDE", DEFAULT_LONGITUDE), 64)
 
   p := sunrisesunset.Parameters{
     Latitude:  latitude,
