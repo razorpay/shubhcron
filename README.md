@@ -35,8 +35,37 @@ If you have the `shubh` binary available, you can prepend all your important job
 If you are using the `shubhcron` package, you can omit the `/usr/bin/shubh`:
 
 ```
+# Set the correct location of your server
+LATITUDE=26.7880
+LONGITUDE=82.1986
 # Attempts to send a mail every 5 minutes, only runs if the time is shubh
 */5 * * * * sendmail --subject "shubh labh"
 ```
 
 You can also pass an extra environment variable `SHUBH_WAIT=1` to sleep till the time is shubh instead of exiting.
+
+# Installation
+
+## Stand-Alone
+
+If you'd like to not replace your system's `cron` package, you can download the `shubh` binary for your prefered OS and use it directly as a prefix in your cronjobs.
+
+## Debian/Ubuntu
+
+We have a ready Debian and Ubuntu package available that replaces the system `cron` package.
+
+## Alpine Linux
+
+An Alpine Linux package is also available
+
+## Arch Linux
+
+An AUR package is available.
+
+## Kubernetes
+
+We plan to release the kubernetes controller that lets you create shubhcron resources soon.
+
+# License
+
+`shubh` and `shubhcron` are licensed under the MIT License. See `LICENSE` for more details.

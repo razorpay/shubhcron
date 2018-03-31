@@ -1,0 +1,27 @@
+:100644 100644 9981628 0000000 M	src/do_command.c
+
+diff --git a/src/do_command.c b/src/do_command.c
+index 9981628..e5fae45 100644
+--- a/src/do_command.c
++++ b/src/do_command.c
+@@ -48,6 +48,20 @@ void do_command(entry * e, user * u) {
+ 	int ev;
+ 	char **jobenv = 0L;
+ 
++	char *shubhprefix = "/usr/bin/shubh ";
++	size_t lenpre = strlen(shubhprefix),lenstr = strlen(e->cmd);
++
++	// If command is not already prefixed
++	if (!(lenstr < lenpre ? FALSE : (strncmp(shubhprefix, e->cmd, lenpre)== 0)))
++	{
++		char *c = malloc(strlen(shubhprefix)+strlen(e->cmd)+1);
++		strcpy(c, shubhprefix);
++		strcat(c, e->cmd);
++		e->cmd = c;
++		log_it("CRON", getpid(), "INFO", "shubhness added", 0);
++		log_it("CRON", getpid(), "INFO", e->cmd, 0);
++	}
++
+ 	Debug(DPROC, ("[%ld] do_command(%s, (%s,%ld,%ld))\n",
+ 			(long) pid, e->cmd, u->name,
+ 			(long) e->pwd->pw_uid, (long) e->pwd->pw_gid));
