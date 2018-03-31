@@ -198,6 +198,10 @@ func getVedicDay(now time.Time) (time.Time, time.Time, time.Time) {
 
     sunset = time.Date(yesterday.Year(), yesterday.Month(), yesterday.Day(), sunset.Hour(), sunset.Minute(), sunset.Second(), sunset.Nanosecond(), loc)
     nextSunrise = time.Date(yesterday.Year(), yesterday.Month(), yesterday.Day(), nextSunrise.Hour(), nextSunrise.Minute(), nextSunrise.Second(), nextSunrise.Nanosecond(), loc)
+
+    tmp := nextSunrise
+    nextSunrise = sunrise
+    sunrise = tmp
   } else {
     debug("Sun is up, rise and shine")
     // Calculate the sunrise time for tomorrow
