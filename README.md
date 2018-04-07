@@ -68,7 +68,7 @@ We plan to release the kubernetes controller that lets you create ShubhCronJob r
 
 ## Reading the Stars
 
-In order to figure out the best shubh muhurat, `shubh` calculates the vedic day (which starts from sunrise and lasts till the next sunrise), calculates the correct चौगाड़िया and then uses a vedic lookup table (memoized) to determine if the time is auspiciousness or not.
+In order to figure out the best shubh muhurat, `shubh` calculates the vedic day (which starts from sunrise and lasts till the next sunrise), calculates the correct चौगाड़िया and then uses a vedic lookup table (memoized) to determine if the time is auspicious or not.
 
 The current system time is used for all calculations. The latitude and longitude, required for calculation of sunrise and sunset times, are picked up from the environment. If not available, the coordinates of Ayodhya are used by default.
 The [library]((https://github.com/kelvins/sunrisesunset)) used for calculating sunrise/sunset times implements the same algorithm published by the [National Oceanic & Atmospheric Administration (NOAA)][noaa] and includes corrections for Atmospheric refraction.
