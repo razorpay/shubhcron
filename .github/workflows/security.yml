@@ -10,7 +10,7 @@ jobs:
         id: semgrep
         uses: returntocorp/semgrep-action@v1
         with:
-          config: p/r2c-ci
+          config: p/gosec
           generatesarif: "1"
       - name: upload to github code scanning
         uses: github/codeql-action/upload-sarif@v1
