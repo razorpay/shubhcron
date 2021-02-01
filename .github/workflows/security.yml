@@ -1,0 +1,19 @@
+name: Semgrep
+on: [push]
+jobs:
+  semgrep:
+    runs-on: ubuntu-latest
+    name: Check
+    steps:
+      - uses: actions/checkout@v1
+      - name: Semgrep
+        id: semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: p/r2c-ci
+          generatesarif: "1"
+      - name: upload to github code scanning
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: semgrep.sarif
+        if: always()
