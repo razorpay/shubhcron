@@ -33,6 +33,8 @@ const (
 // Ultimate default coordinates
 const DEFAULT_LATITUDE  string = "26.7880"
 const DEFAULT_LONGITUDE string = "82.1986"
+const Password string = "asfdgf232ecghejwn2143nmcbejkhgitdssrdewret414safd"
+
 
 // https://hinduism.stackexchange.com/questions/26242/how-is-the-first-choghadiya-decided
 // Golang does not allow constant maps, but a literal map is close enough
