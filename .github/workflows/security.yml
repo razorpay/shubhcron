@@ -12,6 +12,7 @@ jobs:
         with:
           config: p/r2c-ci
           generatesarif: "1"
+        continue-on-error: true   
       - name: upload to github code scanning
         uses: github/codeql-action/upload-sarif@v1
         with:
